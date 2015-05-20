@@ -314,8 +314,8 @@ if __name__ == '__main__':
 
     # Rudimentary support for custom word search files.
     if len(sys.argv) > 1:
-        key_file_path = sys.argv[2]
-        grid_file_path = sys.argv[3]
+        key_file_path = sys.argv[1]
+        grid_file_path = sys.argv[2]
     else:
         key_file_path = 'word_list.txt'
         grid_file_path = 'word_search.txt'

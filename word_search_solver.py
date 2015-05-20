@@ -71,6 +71,7 @@
 
 import os
 import sys
+import collections
 
 
 class WordSearchSolver(object):  # Subclassing object is a Py2 best practice.
@@ -123,21 +124,17 @@ class WordSearchSolver(object):  # Subclassing object is a Py2 best practice.
         arbitrary lengths of both top-level lists and sub-lists.
         '''
 
-        self.coordinates = {}
+        self.coordinates = collections.defaultdict(list)
 
         grid = load_list_from_text_file(self.grid_file_path)
 
         for y_coordinate, each_row in enumerate(grid):
             for x_coordinate, each_column in enumerate(each_row):
                 key = grid[y_coordinate][x_coordinate]
-                try:
-                    # Using a tuple implies the data is immutable.
-                    coords = (y_coordinate, x_coordinate)
-                    self.coordinates[key].append(coords)
-                except KeyError:
-                    # For when it hasn't yet run across this key in the graph.
-                    self.coordinates[key] = []
-                    self.coordinates[key].append((y_coordinate, x_coordinate))
+
+                # Using a tuple implies the data is immutable.
+                coords = (y_coordinate, x_coordinate)
+                self.coordinates[key].append(coords)
 
     def check_for_word_in_direction(self, word, direction):
         '''
@@ -241,13 +238,11 @@ class WordSearchSolver(object):  # Subclassing object is a Py2 best practice.
 
         self.build_dictionary_of_coordinates()
 
-        found_words = {}
+        # Subdicts for directions, since one word could conceivably
+        # have multiple directions and/or locations.
+        found_words = collections.defaultdict(dict)
 
         for word in self.keys:
-
-            # Subdicts for directions, since one word could conceivably
-            # have multiple directions and/or locations.
-            found_words[word] = {}
 
             for direction in WordSearchSolver.directions.keys():
 

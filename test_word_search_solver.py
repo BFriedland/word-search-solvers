@@ -154,9 +154,9 @@ class TestWordSearchSolver(unittest.TestCase):
             assert 'LCD:' in written_file
             assert 'Disk drive:' in written_file
             assert 'Wireless:' in written_file
-            assert '\tDUR:' in written_file
-            assert '\t\t(2, 11)' in written_file
-            assert '\tNot found.' in written_file
+            assert '    DUR:' in written_file
+            assert '        (2, 11)' in written_file
+            assert '    Not found.' in written_file
         finally:
             os.remove('tested.txt')
 

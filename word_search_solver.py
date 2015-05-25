@@ -244,6 +244,13 @@ class WordSearchSolver(object):  # Subclassing object is a Py2 best practice.
 
         for word in self.keys:
 
+            # Using collections.defaultdict this waymeans that keys
+            # that are not found in the graph are not actually given
+            # their own empty directions sub-dictionary, which is
+            # important for demonstrating that a key was not found
+            # in the graph. This flag is used to compensate.
+            found_this_word = False
+
             for direction in WordSearchSolver.directions.keys():
 
                 results = self.check_for_word_in_direction(word, direction)
@@ -251,6 +258,10 @@ class WordSearchSolver(object):  # Subclassing object is a Py2 best practice.
                 if results:
                     # {'LCD': {D: [(1, 0) ...] ...}, }
                     found_words[word][direction] = results
+                    found_this_word = True
+
+            if found_this_word is False:
+                found_words[word] = {}
 
         if self.no_output is False:
             write_solution_to_file(found_words)

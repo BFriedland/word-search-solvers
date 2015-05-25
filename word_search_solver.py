@@ -266,8 +266,8 @@ def write_solution_to_file(results, file_name='fancy_solution.txt'):
 
     explanation = ('\nFormat of this file:'
                    '\n\nEach word found:'
-                   '\n\tEach direction the word was found in:'
-                   '\n\t\t(X, Y) coordinates of first letter in the word.'
+                   '\n    Each direction the word was found in:'
+                   '\n        (X, Y) coordinates of first letter in the word.'
                    '\n\n')
 
     with open(file_name, 'w+') as solution_file:
@@ -281,18 +281,18 @@ def write_solution_to_file(results, file_name='fancy_solution.txt'):
             solution_file.write('\n\n{}:'.format(each_key))
 
             if not results[each_key]:
-                    solution_file.write('\n\tNot found.'.format(each_key))
+                    solution_file.write('\n    Not found.'.format(each_key))
 
             for each_direction in results[each_key].keys():
 
-                solution_file.write('\n\t{}:'.format(each_direction))
+                solution_file.write('\n    {}:'.format(each_direction))
 
                 for each_result in results[each_key][each_direction]:
 
                     x = each_result[0]
                     y = each_result[1]
 
-                    solution_file.write('\n\t\t({}, {})'.format(x, y))
+                    solution_file.write('\n        ({}, {})'.format(x, y))
 
         solution_file.write('\n')
 

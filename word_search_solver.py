@@ -269,7 +269,7 @@ class WordSearchSolver(object):  # Subclassing object is a Py2 best practice.
 
         return found_words
 
-    def write_solution_to_file(results):
+    def write_solution_to_file(self, results):
         '''
         Write the results of calling solve_puzzle
         to a text file, with pretty printing.

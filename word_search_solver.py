@@ -319,11 +319,22 @@ def load_list_from_text_file(file_name):
     return lines
 
 
-if __name__ == '__main__':
+def handle_cli_arguments():
+    '''
+    Handle additional command line interface arguments to provide
+    rudimentary support for custom word search files.
 
+    The first additional argument allows the user to specify a word list,
+    while the second argument permits specification of a puzzle grid.
+    The final argument allows a custom solution file to be named.
+    '''
+
+    # sys is only needed if this function is called, which only happens
+    # when a word search file is run directly. This means it is not
+    # required for using other parts of the word_search_solvers package
+    # and may be imported only as needed: inside this function.
     import sys
 
-    # Rudimentary support for custom word search files.
     try:
         key_path = 'word_list.txt'
         grid_path = 'word_search.txt'
@@ -354,3 +365,7 @@ if __name__ == '__main__':
               " <path to grid>"
               " <(optional) path to output>"
               "\n".format(error))
+
+
+if __name__ == '__main__':
+    handle_cli_arguments()

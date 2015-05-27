@@ -18,6 +18,7 @@ GRAPH_FILE_PATH = 'word_search.txt'
 
 TEST_KEYS_PATH = 'test_keys_file.txt'
 TEST_GRAPH_PATH = 'test_graph_file.txt'
+TEST_SOLUTION_PATH = 'test_solution_file.txt'
 
 
 def write_list_to_txt_file(file_name, what_to_write):
@@ -55,8 +56,11 @@ def uses_test_files(original_function):
 class TestWordSearchSolver(unittest.TestCase):
 
     def setUp(self):
-        real_files = (KEY_FILE_PATH, GRAPH_FILE_PATH)
-        test_files = (TEST_KEYS_PATH, TEST_GRAPH_PATH)
+        # TEST_SOLUTION_PATH is used while testing on real
+        # solution files to avoid stepping on preexisting
+        # solutions the tester might want to keep.
+        real_files = (KEY_FILE_PATH, GRAPH_FILE_PATH, TEST_SOLUTION_PATH)
+        test_files = (TEST_KEYS_PATH, TEST_GRAPH_PATH, TEST_SOLUTION_PATH)
 
         # The stars are unpacking operands.
         # One star unpacks a tuple, two stars unpacks a dictionary.
@@ -146,10 +150,10 @@ class TestWordSearchSolver(unittest.TestCase):
 
         result = self.real_solver.solve_puzzle()
 
-        wss.write_solution_to_file(result, file_name='tested.txt')
+        self.real_solver.write_solution_to_file(result)
 
         try:
-            written_file = wss.load_list_from_text_file('tested.txt')
+            written_file = wss.load_list_from_text_file(TEST_SOLUTION_PATH)
             assert 'Binary:' in written_file
             assert 'LCD:' in written_file
             assert 'Disk drive:' in written_file
@@ -158,7 +162,7 @@ class TestWordSearchSolver(unittest.TestCase):
             assert '        (2, 11)' in written_file
             assert '    Not found.' in written_file
         finally:
-            os.remove('tested.txt')
+            os.remove(TEST_SOLUTION_PATH)
 
 
 unittest.main()

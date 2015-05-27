@@ -128,6 +128,45 @@ def load_list_from_text_file(file_name):
     return lines
 
 
+def write_solution_to_file(results, solution_file_path):
+    '''
+    Write the results of calling solve_puzzle
+    to a text file, with pretty printing.
+    '''
+
+    explanation = ('\nFormat of this file:'
+                   '\n\nEach word found:'
+                   '\n    Each direction the word was found in:'
+                   '\n        (X, Y) coordinates of first letter in the word.'
+                   '\n\n')
+
+    with open(solution_file_path, 'w+') as solution_file:
+
+        solution_file.write(explanation)
+
+        sorted_keys = sorted(results)
+
+        for each_key in sorted_keys:
+
+            solution_file.write('\n\n{}:'.format(each_key))
+
+            if not results[each_key]:
+                    solution_file.write('\n    Not found.'.format(each_key))
+
+            for each_direction in results[each_key].keys():
+
+                solution_file.write('\n    {}:'.format(each_direction))
+
+                for each_result in results[each_key][each_direction]:
+
+                    x = each_result[0]
+                    y = each_result[1]
+
+                    solution_file.write('\n        ({}, {})'.format(x, y))
+
+        solution_file.write('\n')
+
+
 if __name__ == '__main__':
 
     words = load_list_from_text_file('word_list.txt')
@@ -135,32 +174,38 @@ if __name__ == '__main__':
 
     results = solve_puzzle(words, graph)
 
-    # Uncomment for terminal output.
+    # Uncomment for verbose terminal output.
     # for each_key, each_value in sorted(results.iteritems()):
     #     print('{}: {}'.format(each_key, each_value))
 
-    from word_search_solver import write_solution_to_file as write_to_file
+    write_solution_to_file(results, 'simple_solution.txt')
 
-    write_to_file(results, file_name='simple_solution.txt')
-
-    print("\nsimple_solution.txt file written.")
+    print("\nsimple_solution.txt file written."
+          "\nAttempting to check simple_solution.txt"
+          " against fancy_solution.txt . . .")
 
     try:
 
         loaded_simple_solution = load_list_from_text_file('fancy_solution.txt')
         loaded_fancy_solution = load_list_from_text_file('simple_solution.txt')
 
-        for each_line_index, each_line in enumerate(loaded_simple_solution):
-            assert each_line == loaded_fancy_solution[each_line_index]
+        assert loaded_simple_solution == loaded_fancy_solution
 
-        print("Checks against fancy_solution.txt pass.")
+        print("The files simple_solution.txt and"
+              " fancy_solution.txt have identical contents.")
 
     except:
-        # The error names for this exception are different in Py2 and Py3.
+        # The error names for determining whether or not
+        # the file was found are are different in Py2 and Py3.
         # This call to sys.exc_info will print the error
         # raised regardless of what type it is.
         import sys
         error = sys.exc_info()
-        print("\n{}".format(error[1]))
-        print("\nRun word_search_solver.py first"
-              " if you'd like to compare results.")
+
+        # Specific cases before general cases.
+        if isinstance(error[1], AssertionError):
+            print("{}".format(str(error)))  # error[1] would print None here.
+            print("Use diff to compare the file differences.")
+        else:
+            print("{}".format(error[1]))
+            print("To compare results, run word_search_solver.py.")

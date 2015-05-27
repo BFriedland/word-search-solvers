@@ -98,10 +98,11 @@ class WordSearchSolver(object):  # Subclassing object is a Py2 best practice.
         'DDR': (1,   1)   # Diagonal down right
     }
 
-    def __init__(self, key_file_path, grid_file_path, no_output=False):
+    def __init__(self, key_path, grid_path, solution_path, no_output=False):
 
-        self.key_file_path = key_file_path
-        self.grid_file_path = grid_file_path
+        self.key_file_path = key_path
+        self.grid_file_path = grid_path
+        self.solution_file_path = solution_path
         self.no_output = no_output
 
         # Instance state variables, to hold the results of calling
@@ -264,48 +265,47 @@ class WordSearchSolver(object):  # Subclassing object is a Py2 best practice.
                 found_words[word] = {}
 
         if self.no_output is False:
-            write_solution_to_file(found_words)
+            self.write_solution_to_file(found_words)
 
         return found_words
 
+    def write_solution_to_file(results):
+        '''
+        Write the results of calling solve_puzzle
+        to a text file, with pretty printing.
+        '''
 
-def write_solution_to_file(results, file_name='fancy_solution.txt'):
-    '''
-    Write the results of calling solve_puzzle
-    to a text file, with pretty printing.
-    '''
+        explanation = ('\nFormat of this file:'
+                       '\n\nEach word found:'
+                       '\n    Each direction the word was found in:'
+                       '\n        (X, Y) coordinates of first letter in the word.'
+                       '\n\n')
 
-    explanation = ('\nFormat of this file:'
-                   '\n\nEach word found:'
-                   '\n    Each direction the word was found in:'
-                   '\n        (X, Y) coordinates of first letter in the word.'
-                   '\n\n')
+        with open(self.solution_file_path, 'w+') as solution_file:
 
-    with open(file_name, 'w+') as solution_file:
+            solution_file.write(explanation)
 
-        solution_file.write(explanation)
+            sorted_keys = sorted(results)
 
-        sorted_keys = sorted(results)
+            for each_key in sorted_keys:
 
-        for each_key in sorted_keys:
+                solution_file.write('\n\n{}:'.format(each_key))
 
-            solution_file.write('\n\n{}:'.format(each_key))
+                if not results[each_key]:
+                        solution_file.write('\n    Not found.'.format(each_key))
 
-            if not results[each_key]:
-                    solution_file.write('\n    Not found.'.format(each_key))
+                for each_direction in results[each_key].keys():
 
-            for each_direction in results[each_key].keys():
+                    solution_file.write('\n    {}:'.format(each_direction))
 
-                solution_file.write('\n    {}:'.format(each_direction))
+                    for each_result in results[each_key][each_direction]:
 
-                for each_result in results[each_key][each_direction]:
+                        x = each_result[0]
+                        y = each_result[1]
 
-                    x = each_result[0]
-                    y = each_result[1]
+                        solution_file.write('\n        ({}, {})'.format(x, y))
 
-                    solution_file.write('\n        ({}, {})'.format(x, y))
-
-        solution_file.write('\n')
+            solution_file.write('\n')
 
 
 def load_list_from_text_file(file_name):
@@ -324,14 +324,33 @@ if __name__ == '__main__':
     import sys
 
     # Rudimentary support for custom word search files.
-    if len(sys.argv) > 1:
-        key_file_path = sys.argv[1]
-        grid_file_path = sys.argv[2]
-    else:
-        key_file_path = 'word_list.txt'
-        grid_file_path = 'word_search.txt'
+    try:
+        key_path = 'word_list.txt'
+        grid_path = 'word_search.txt'
+        solution_path = 'fancy_solution.txt'
 
-    solver = WordSearchSolver(key_file_path, grid_file_path)
-    solution = solver.solve_puzzle()
+        # The ordering of this conditional presumes users
+        # are more likely to want to use custom key files
+        # on the provided grid file to test this program.
+        if len(sys.argv) > 1:
+            key_path = sys.argv[1]
+        if len(sys.argv) > 2:
+            grid_path = sys.argv[2]
+        if len(sys.argv) > 3:
+            solution_path = sys.argv[3]
 
-    print("fancy_solution.txt file written.")
+        solver = WordSearchSolver(key_path, grid_path, solution_path)
+        solution = solver.solve_puzzle()
+
+        print("{} file written.".format(solution_path))
+
+    except IOError:
+        error = sys.exc_info()[1]
+        print("\n{}"
+              "\n\nGuide to using word_search_solver.py with"
+              " specified command line arguments:"
+              "\nword_search_solver.py"
+              " <path to keys>"
+              " <path to grid>"
+              " <(optional) path to output>"
+              "\n".format(error))
